@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Displays information about subdomains for a given domain
+# shellcheck disable=SC2086
+
+audit_subdomain() {
+    local domain="$1"
+    local sub="$2"
+    dig "${sub}.${domain}" | grep -A1 'ANSWER SECTION:' | tail -n 1 | awk -v sub="$sub" '{print "The subdomain " sub " is a " $4 " record and points to " $5}'
+}
+
+if [ "$#" -eq 1 ]; then
+    audit_subdomain "$1" "www"
+    audit_subdomain "$1" "lb-01"
+    audit_subdomain "$1" "web-01"
+    audit_subdomain "$1" "web-02"
+elif [ "$#" -eq 2 ]; then
+    audit_subdomain "$1" "$2"
+fi
+
